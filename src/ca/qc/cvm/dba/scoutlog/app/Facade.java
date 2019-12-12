@@ -55,6 +55,12 @@ public class Facade {
 		return app.getNumberOfHabitablePlanets();
 	}
 	
+	
+	/*Nouvelle methode rajoute */
+	public List<String> getPathPlanetList(String depart, String arrivee) {
+		return app.getPlanetListTrajectoire(depart,arrivee);
+	}
+	
 	public void exit() {
 		app.exit();
 	}

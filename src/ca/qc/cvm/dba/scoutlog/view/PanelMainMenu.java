@@ -30,7 +30,7 @@ public class PanelMainMenu extends CommonPanel {
 			}
 		});
 		
-		this.addButton("R�pertoire et donn�es", 20, 70, 170, 40, new ActionListener() {
+		this.addButton("Repertoire et donnees", 20, 70, 170, 40, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -38,7 +38,7 @@ public class PanelMainMenu extends CommonPanel {
 			}
 		});
 		
-		this.addButton("Visionnement de plan�tes", 20, 120, 170, 40, new ActionListener() {
+		this.addButton("Visionnement de planetes", 20, 120, 170, 40, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -75,7 +75,7 @@ public class PanelMainMenu extends CommonPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int result = JOptionPane.showConfirmDialog(PanelMainMenu.this, "Voulez-vous vraiment supprimer toute la base de donn�es?");
+				int result = JOptionPane.showConfirmDialog(PanelMainMenu.this, "Voulez-vous vraiment supprimer toute la base de donnees?");
 				
 				if (result == JOptionPane.OK_OPTION) {
 					Facade.getInstance().processEvent(new DeleteAllEvent());

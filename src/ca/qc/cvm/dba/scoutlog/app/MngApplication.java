@@ -112,6 +112,9 @@ public class MngApplication implements Runnable {
 	public List<String> getPlanetList() {
 		return LogDAO.getPlanetList();
 	}
+	public List<String> getPlanetListTrajectoire(String depart,String arrivee) {
+		return LogDAO.getPlanetListTrajectoire(depart,arrivee);
+	}
 	
 	public void exit() {
 		MongoConnection.releaseConnection();

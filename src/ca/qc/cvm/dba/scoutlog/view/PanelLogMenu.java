@@ -37,7 +37,7 @@ public class PanelLogMenu extends CommonPanel {
 	
 	@Override
 	public void jbInit() throws Exception {
-		previousBtn = this.addButton("Pr�c�dent", 530, 20, 150, 40, new ActionListener() {
+		previousBtn = this.addButton("Precedent", 530, 20, 150, 40, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -55,7 +55,7 @@ public class PanelLogMenu extends CommonPanel {
 			}
 		});
 
-		this.addButton("Ajouter une entr�e", 20, 20, 150, 40, new ActionListener() {
+		this.addButton("Ajouter une entree", 20, 20, 150, 40, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -85,7 +85,7 @@ public class PanelLogMenu extends CommonPanel {
 	 */
 	@Override
 	public void resetUI() {
-		info.setText("Aucune entr�e...");
+		info.setText("Aucune entree...");
 		int entriesCount = Facade.getInstance().getNumberOfEntries();
 		
 		if (position == 0 || entriesCount == 0) {
@@ -122,23 +122,23 @@ public class PanelLogMenu extends CommonPanel {
 				}
 				
 				if (log.getStatus().equals("Exploration")) {
-					data.append("Plan�te : " + log.getPlanetName() + "\n");
+					data.append("Planete : " + log.getPlanetName() + "\n");
 					data.append("Galaxie : " + log.getGalaxyName() + "\n");
 					data.append("Habitable : " + log.isHabitable() + "\n");
-					data.append("Plan�te(s) proche(s) : " + log.getNearPlanets() + "\n");
+					data.append("Planete(s) proche(s) : " + log.getNearPlanets() + "\n");
 					image.setIcon(new ImageIcon(log.getImage()));
 				}
 				
 				info.setText(data.toString());
 			}
 			else {
-				info.setText("Aucune entr�e trouv�e...");
+				info.setText("Aucune entree trouvee...");
 				image.setVisible(false);
 			}
 			
 		}
 		else {
-			info.setText("Aucune entr�e...");
+			info.setText("Aucune entree...");
 			image.setVisible(false);
 		}
 	}

@@ -1,27 +1,20 @@
 package ca.qc.cvm.dba.scoutlog.dao;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-
 import org.bson.Document;
-import org.bson.types.Binary;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Session;
-import org.neo4j.driver.Statement;
 import org.neo4j.driver.StatementResult;
-import org.neo4j.driver.types.Node;
-import org.neo4j.driver.types.Relationship;
+import org.neo4j.driver.internal.value.PathValue;
+import org.neo4j.driver.types.Path;
+import org.neo4j.driver.types.Path.Segment;
 
 import com.mongodb.Block;
-import com.mongodb.DB;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.IndexOptions;
-
 import ca.qc.cvm.dba.scoutlog.entity.LogEntry;
 
 public class LogDAO {
@@ -73,18 +66,9 @@ public class LogDAO {
 					StatementResult result = connectionNeo4j.run(cypherRequete, parameters);
 
 					// permet de trouver les 2 dernieres planetes
-					String queryLastInsertedPlanets = "Match (n) Return n.name as name Order by n.date desc Limit 2"; // tri
-																														// sur
-																														// la
-																														// date
-																														// pour
-																														// determiner
-																														// la
-																														// derniere
-																														// insertion
-																														// et
-																														// avant
-																														// derniere
+					String queryLastInsertedPlanets = "Match (n) Return n.name as name Order by n.dateFK  DESC Limit 2";
+					//tri sur la date pour determiner la derniere insertion et avant derniere
+					
 					StatementResult resultLastInsertedPlanets = connectionNeo4j.run(queryLastInsertedPlanets);
 					List<Record> lstRecords = resultLastInsertedPlanets.list();
 					System.out.println(lstRecords.toString());
@@ -96,13 +80,12 @@ public class LogDAO {
 																										// parametres de
 																										// la query
 						System.out.println(lstRecords.toString());
-						parametersLastPlanet.put("planeteAvantDerniere",
-								lstRecords.get(lstRecords.size() - 2).get("name"));
-						parametersLastPlanet.put("planeteDerniere", lstRecords.get(lstRecords.size() - 1).get("name"));
+						parametersLastPlanet.put("planeteAvantDerniere",lstRecords.get(1).get("name"));
+						parametersLastPlanet.put("planeteDerniere", lstRecords.get(0).get("name"));
+						System.out.println(lstRecords.get(0).get("name")+","+lstRecords.get(1).get("name"));
 						// matching des 2 derniers nodes et creation de la relation SUIT
 						String queryCreationRelation = "MATCH (a {name:$planeteAvantDerniere}), (b {name:$planeteDerniere}) CREATE (a)-[:PRECEDE] ->(b) ";
-						StatementResult resultCreationRelation = connectionNeo4j.run(queryCreationRelation,
-								parametersLastPlanet);
+						StatementResult resultCreationRelation = connectionNeo4j.run(queryCreationRelation,	parametersLastPlanet);
 					}
 					/*
 					 * doc.append("namePlanete", log.getPlanetName()); doc.append("habitable",
@@ -136,12 +119,12 @@ public class LogDAO {
 		List<String> planets = new ArrayList<String>();
 		try {
 			Session connectionNeo4j = Neo4jConnection.getConnection();
-			String querylistePlanete = "MATCH (n) RETURN n.name as name Order by n.date desc";
+			String querylistePlanete = "MATCH (n) RETURN n.name as name Order by n.dateFK desc";
 			StatementResult resultListePlanete = connectionNeo4j.run(querylistePlanete);
 
 			while (resultListePlanete.hasNext()) {
 				Record item = resultListePlanete.next(); // representation Record.toString() Record<{nb: 1}>
-				planets.add(item.get("name").toString().replace("\"", "")); //neo4j retourne ""
+				planets.add(item.get("name").toString().replace("\"", "")); // neo4j retourne ""
 			}
 
 			System.out.println(planets);
@@ -153,7 +136,30 @@ public class LogDAO {
 
 		return planets;
 	}
-
+	/*
+	 * Shortest path entre 2 nodes, et le return permet d extraire le nom des planetes 
+	 */
+	public static List<String> getPlanetListTrajectoire(String planeteDepart,String planeteArrivee) {
+		List<String> pathPlanets = new ArrayList<String>();
+		try {
+			Session connectionNeo4j = Neo4jConnection.getConnection();
+			HashMap<String , Object> planetsToPlanetsB= new HashMap<String, Object>();
+			planetsToPlanetsB.put("planeteDepart",planeteDepart);
+			planetsToPlanetsB.put("planeteArrivee",planeteArrivee);
+			System.out.println(planeteDepart+"="+planeteArrivee);
+			String queryShortestPathPlanets = "MATCH (a), (b), p = shortestPath((a)-[*]-(b)) WHERE a.name =$planeteDepart and b.name= $planeteArrivee  RETURN extract(x IN nodes(p) | x.name) as p ";
+			StatementResult resultListePlanete = connectionNeo4j.run(queryShortestPathPlanets,planetsToPlanetsB);
+			Record item = resultListePlanete.next(); // representation Record.toString() Record<{nb: 1}>
+				for (Object planetsObjects :item.get("p").asList())
+					pathPlanets.add(planetsObjects.toString());
+		
+		}
+		
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pathPlanets;
+	}
 	/**
 	 * Retourne l'entrée selon sa position dans le temps. La derniére entrée est 0,
 	 * l'avant derniére est 1, l'avant avant derniére est 2, etc.
@@ -214,7 +220,8 @@ public class LogDAO {
 						byte[] image = item.get("photo").asByteArray();
 						boolean habitable = item.get("habitable").asBoolean();
 
-						entry = new LogEntry(date, name, statut, "", lstPlanetesString, planetName, galaxyName, image,habitable);
+						entry = new LogEntry(date, name, statut, "", lstPlanetesString, planetName, galaxyName, image,
+								habitable);
 						break;
 					}
 

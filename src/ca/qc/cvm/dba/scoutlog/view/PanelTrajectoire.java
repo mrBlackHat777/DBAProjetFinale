@@ -53,7 +53,7 @@ public class PanelTrajectoire extends CommonPanel {
 		departField = new JComboBox<String>(choices);
 		departLabel = super.addLabel("Depart : ", 20, 120, 150, 30);
 		super.addField(departField, 190, 120, 250, 30);
-	    System.out.println(departField.getBounds());
+	    
 	
 		arriveeField = new JComboBox<String>(choices);
 		arriveeLabel = super.addLabel("Arivee : ", 460, 120, 150, 30);
@@ -93,20 +93,13 @@ public class PanelTrajectoire extends CommonPanel {
 			public void actionPerformed(ActionEvent e) {
 				List<String> lstPlanetes = Facade.getInstance().getPlanetList();
 				System.out.println("***");
-				/*
-				 ComboBoxModel model = departField.getModel();
-	                int size = model.getSize();
-	                for(int i=0;i<size;i++) {
-	                    Object element = model.getElementAt(i);
-	                    System.out.println("Element at " + i + " = " + element);
-	                }
-	                */
-	                System.out.println(departField.getSelectedIndex());
+				
+	            System.out.println(departField.getSelectedIndex());
 				int positionLeft=lstPlanetes.indexOf(departField.getModel().getSelectedItem());
 				int positionRight=lstPlanetes.indexOf(arriveeField.getModel().getSelectedItem());
 				//lstPlanetes.subList(
 				System.out.println(positionLeft+" "+positionRight);
-				trajet.setText("");
+				trajet.setText(Facade.getInstance().getPathPlanetList(departField.getModel().getSelectedItem().toString(),arriveeField.getModel().getSelectedItem().toString()).toString());
 			}
 		});
 		// Utilisez super.addField et super.addButton et etc pour cr�er votre interface
@@ -129,6 +122,7 @@ public class PanelTrajectoire extends CommonPanel {
 		for (String planets : Facade.getInstance().getPlanetList()) {
 			choices.addElement(planets);
 		}
+	
 
 	}
 }

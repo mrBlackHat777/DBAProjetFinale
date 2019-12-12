@@ -43,7 +43,7 @@ public class PanelPlanetsViewer extends CommonPanel {
 	
 	@Override
 	protected void jbInit() throws Exception {
-		previousBtn = this.addButton("Pr�c�dent", 530, 20, 150, 40, new ActionListener() {
+		previousBtn = this.addButton("Precedent", 530, 20, 150, 40, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -113,7 +113,7 @@ public class PanelPlanetsViewer extends CommonPanel {
 	}
 
 	public void resetFramesInfos() {
-		info.setText("Aucune entr�e...");
+		info.setText("Aucune entree...");
 		int entriesCount = Facade.getInstance().getNumberOfEntries(); //le nbr d'entree determine l'activation/desactivation des boutons
 		
 		if (position == 0 ||lst.size() == 0) {
